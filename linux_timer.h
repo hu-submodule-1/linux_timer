@@ -24,9 +24,14 @@ extern "C"
 #include <signal.h>
 #include <time.h>
 
+// 定时器对象结构体
 struct _linux_timer_t;
 
-typedef void (*linux_timer_cb_func)(struct _linux_timer_t *linux_timer);
+/**
+ * @brief  定时器回调函数
+ * @param  linux_timer: 输入参数, 定时器对象
+ */
+typedef void (*linux_timer_cb_func)(const struct _linux_timer_t *linux_timer);
 
 // 定时器对象结构体
 typedef struct _linux_timer_t
