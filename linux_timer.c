@@ -81,6 +81,8 @@ bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb_func ti
         return false;
     }
 
+    linux_timer->timeout = timeout;
+
     return true;
 }
 
@@ -150,6 +152,8 @@ bool linux_timer_set_timeout(linux_timer_t *linux_timer, const uint32_t timeout)
         return false;
     }
 
+    linux_timer->timeout = timeout;
+
     return true;
 }
 
@@ -168,6 +172,32 @@ bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repe
     }
 
     linux_timer->repeat_count = repeat_count;
+
+    return true;
+}
+
+/**
+ * @brief  设置定时器就绪(立即执行)
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 成功
+ * @return false: 失败
+ */
+bool linux_timer_ready(linux_timer_t *linux_timer)
+{
+    if (NULL == linux_timer)
+    {
+        return false;
+    }
+
+    struct itimerspec timer_spec = {0};
+    timer_spec.it_interval.tv_sec = (linux_timer->timeout / 1000);
+    timer_spec.it_interval.tv_nsec = ((linux_timer->timeout % 1000) * 1000 * 1000);
+    timer_spec.it_value.tv_sec = 0;
+    timer_spec.it_value.tv_nsec = 1;
+    if (-1 == timer_settime(linux_timer->timer_id, 0, &timer_spec, NULL))
+    {
+        return false;
+    }
 
     return true;
 }

@@ -35,6 +35,7 @@ typedef struct _linux_timer_t
     linux_timer_cb_func timer_cb; // 定时器回调函数
     int32_t repeat_count;         // 定时器重复次数( -1: 无限循环; 1: 执行一次)
     const void *user_data;        // 用户数据
+    uint32_t timeout;             // 定时器超时时间(单位: ms)
 } linux_timer_t;
 
 /**
@@ -83,6 +84,14 @@ bool linux_timer_set_timeout(linux_timer_t *linux_timer, const uint32_t timeout)
  * @return false: 失败
  */
 bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repeat_count);
+
+/**
+ * @brief  设置定时器就绪(立即执行)
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 成功
+ * @return false: 失败
+ */
+bool linux_timer_ready(linux_timer_t *linux_timer);
 
 #ifdef __cplusplus
 }
