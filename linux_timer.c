@@ -53,7 +53,7 @@ static void linux_timer_thread(union sigval sigev_value)
  * @return true : 成功
  * @return false: 失败
  */
-bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb_func timer_cb, const uint32_t timeout,
+bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb timer_cb, const uint32_t timeout,
                         const void *user_data)
 {
     struct sigevent sev = {0};
@@ -116,7 +116,7 @@ bool linux_timer_delete(linux_timer_t *linux_timer)
  * @return true : 成功
  * @return false: 失败
  */
-bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb_func timer_cb)
+bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_cb)
 {
     if (NULL == linux_timer)
     {
@@ -194,6 +194,54 @@ bool linux_timer_ready(linux_timer_t *linux_timer)
     timer_spec.it_interval.tv_nsec = ((linux_timer->timeout % 1000) * 1000 * 1000);
     timer_spec.it_value.tv_sec = 0;
     timer_spec.it_value.tv_nsec = 1;
+    if (-1 == timer_settime(linux_timer->timer_id, 0, &timer_spec, NULL))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief  暂停定时器
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 成功
+ * @return false: 失败
+ */
+bool linux_timer_pause(linux_timer_t *linux_timer)
+{
+    if (NULL == linux_timer)
+    {
+        return false;
+    }
+
+    struct itimerspec timer_spec = {0};
+    if (-1 == timer_settime(linux_timer->timer_id, 0, &timer_spec, NULL))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief  恢复定时器
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 成功
+ * @return false: 失败
+ */
+bool linux_timer_resume(linux_timer_t *linux_timer)
+{
+    if (NULL == linux_timer)
+    {
+        return false;
+    }
+
+    struct itimerspec timer_spec = {0};
+    timer_spec.it_interval.tv_sec = (linux_timer->timeout / 1000);
+    timer_spec.it_interval.tv_nsec = ((linux_timer->timeout % 1000) * 1000 * 1000);
+    timer_spec.it_value.tv_sec = (linux_timer->timeout / 1000);
+    timer_spec.it_value.tv_nsec = ((linux_timer->timeout % 1000) * 1000 * 1000);
     if (-1 == timer_settime(linux_timer->timer_id, 0, &timer_spec, NULL))
     {
         return false;

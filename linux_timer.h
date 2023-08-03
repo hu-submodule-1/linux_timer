@@ -31,16 +31,16 @@ struct _linux_timer_t;
  * @brief  定时器回调函数
  * @param  linux_timer: 输入参数, 定时器对象
  */
-typedef void (*linux_timer_cb_func)(const struct _linux_timer_t *linux_timer);
+typedef void (*linux_timer_cb)(const struct _linux_timer_t *linux_timer);
 
 // 定时器对象结构体
 typedef struct _linux_timer_t
 {
-    timer_t timer_id;             // 定时器ID
-    linux_timer_cb_func timer_cb; // 定时器回调函数
-    int32_t repeat_count;         // 定时器重复次数( -1: 无限循环; 1: 执行一次)
-    const void *user_data;        // 用户数据
-    uint32_t timeout;             // 定时器超时时间(单位: ms)
+    timer_t timer_id;        // 定时器ID
+    linux_timer_cb timer_cb; // 定时器回调函数
+    int32_t repeat_count;    // 定时器重复次数( -1: 无限循环; 1: 执行一次)
+    const void *user_data;   // 用户数据
+    uint32_t timeout;        // 定时器超时时间(单位: ms)
 } linux_timer_t;
 
 /**
@@ -52,7 +52,7 @@ typedef struct _linux_timer_t
  * @return true : 成功
  * @return false: 失败
  */
-bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb_func timer_cb, const uint32_t timeout,
+bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb timer_cb, const uint32_t timeout,
                         const void *user_data);
 
 /**
@@ -70,7 +70,7 @@ bool linux_timer_delete(linux_timer_t *linux_timer);
  * @return true : 成功
  * @return false: 失败
  */
-bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb_func timer_cb);
+bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_cb);
 
 /**
  * @brief  设置定时器超时时间
@@ -97,6 +97,22 @@ bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repe
  * @return false: 失败
  */
 bool linux_timer_ready(linux_timer_t *linux_timer);
+
+/**
+ * @brief  暂停定时器
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 成功
+ * @return false: 失败
+ */
+bool linux_timer_pause(linux_timer_t *linux_timer);
+
+/**
+ * @brief  恢复定时器
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 成功
+ * @return false: 失败
+ */
+bool linux_timer_resume(linux_timer_t *linux_timer);
 
 #ifdef __cplusplus
 }
