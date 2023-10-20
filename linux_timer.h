@@ -89,6 +89,14 @@ bool linux_timer_set_timeout(linux_timer_t *linux_timer, const uint32_t timeout)
  */
 bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repeat_count);
 
+/**
+ * @brief  定时器是否被暂停
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 已被暂停
+ * @return false: 发生错误/未被暂停
+ */
+bool linux_timer_is_paused(linux_timer_t *linux_timer);
+
 #ifdef __cplusplus
 }
 #endif

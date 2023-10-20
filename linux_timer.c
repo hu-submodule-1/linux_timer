@@ -171,3 +171,31 @@ bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repe
 
     return true;
 }
+
+/**
+ * @brief  定时器是否被暂停
+ * @param  linux_timer: 输出参数, 定时器对象
+ * @return true : 已被暂停
+ * @return false: 发生错误/未被暂停
+ */
+bool linux_timer_is_paused(linux_timer_t *linux_timer)
+{
+    if (NULL == linux_timer)
+    {
+        return false;
+    }
+
+    struct itimerspec timer_spec = {0};
+    if (-1 == timer_gettime(linux_timer->timer_id, &timer_spec))
+    {
+        return false;
+    }
+
+    if ((0 == timer_spec.it_value.tv_sec) && (0 == timer_spec.it_value.tv_nsec) && (0 == timer_spec.it_interval.tv_sec)
+        && (0 == timer_spec.it_interval.tv_nsec))
+    {
+        return true;
+    }
+
+    return false;
+}
