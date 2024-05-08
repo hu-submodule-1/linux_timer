@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "linux_timer.h"
 
@@ -56,6 +57,8 @@ static void linux_timer_thread(union sigval sigev_value)
 bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb timer_cb, const uint32_t timeout,
                         const void *user_data)
 {
+    assert(linux_timer != NULL);
+
     struct sigevent sev = {0};
     memset(&sev, 0, sizeof(struct sigevent));
     sev.sigev_notify = SIGEV_THREAD;
@@ -94,7 +97,7 @@ bool linux_timer_create(linux_timer_t *linux_timer, const linux_timer_cb timer_c
  */
 bool linux_timer_delete(linux_timer_t *linux_timer)
 {
-    if (!linux_timer->timer_id)
+    if ((linux_timer == NULL) || (linux_timer->timer_id == NULL))
     {
         return true;
     }
@@ -113,19 +116,12 @@ bool linux_timer_delete(linux_timer_t *linux_timer)
  * @brief  设置定时器回调函数
  * @param  linux_timer: 输出参数, 定时器对象
  * @param  timer_cb   : 输入参数, 定时器回调函数
- * @return true : 成功
- * @return false: 失败
  */
-bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_cb)
+void linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_cb)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     linux_timer->timer_cb = timer_cb;
-
-    return true;
 }
 
 /**
@@ -137,10 +133,7 @@ bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_c
  */
 bool linux_timer_set_timeout(linux_timer_t *linux_timer, const uint32_t timeout)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     struct itimerspec timer_spec = {0};
     timer_spec.it_interval.tv_sec = (timeout / 1000);
@@ -161,19 +154,12 @@ bool linux_timer_set_timeout(linux_timer_t *linux_timer, const uint32_t timeout)
  * @brief  设置定时器重复次数
  * @param  linux_timer : 输出参数, 定时器对象
  * @param  repeat_count: 输入参数, 定时器重复次数
- * @return true : 成功
- * @return false: 失败
  */
-bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repeat_count)
+void linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repeat_count)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     linux_timer->repeat_count = repeat_count;
-
-    return true;
 }
 
 /**
@@ -184,10 +170,7 @@ bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repe
  */
 bool linux_timer_ready(linux_timer_t *linux_timer)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     struct itimerspec timer_spec = {0};
     timer_spec.it_interval.tv_sec = (linux_timer->timeout / 1000);
@@ -210,10 +193,7 @@ bool linux_timer_ready(linux_timer_t *linux_timer)
  */
 bool linux_timer_pause(linux_timer_t *linux_timer)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     struct itimerspec timer_spec = {0};
     if (-1 == timer_settime(linux_timer->timer_id, 0, &timer_spec, NULL))
@@ -232,10 +212,7 @@ bool linux_timer_pause(linux_timer_t *linux_timer)
  */
 bool linux_timer_resume(linux_timer_t *linux_timer)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     struct itimerspec timer_spec = {0};
     timer_spec.it_interval.tv_sec = (linux_timer->timeout / 1000);
@@ -258,10 +235,7 @@ bool linux_timer_resume(linux_timer_t *linux_timer)
  */
 bool linux_timer_is_paused(linux_timer_t *linux_timer)
 {
-    if (NULL == linux_timer)
-    {
-        return false;
-    }
+    assert(linux_timer != NULL);
 
     struct itimerspec timer_spec = {0};
     if (-1 == timer_gettime(linux_timer->timer_id, &timer_spec))

@@ -67,10 +67,8 @@ bool linux_timer_delete(linux_timer_t *linux_timer);
  * @brief  设置定时器回调函数
  * @param  linux_timer: 输出参数, 定时器对象
  * @param  timer_cb   : 输入参数, 定时器回调函数
- * @return true : 成功
- * @return false: 失败
  */
-bool linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_cb);
+void linux_timer_set_cb(linux_timer_t *linux_timer, const linux_timer_cb timer_cb);
 
 /**
  * @brief  设置定时器超时时间
@@ -85,10 +83,8 @@ bool linux_timer_set_timeout(linux_timer_t *linux_timer, const uint32_t timeout)
  * @brief  设置定时器重复次数
  * @param  linux_timer : 输出参数, 定时器对象
  * @param  repeat_count: 输入参数, 定时器重复次数
- * @return true : 成功
- * @return false: 失败
  */
-bool linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repeat_count);
+void linux_timer_set_repeat_count(linux_timer_t *linux_timer, const int32_t repeat_count);
 
 /**
  * @brief  设置定时器就绪(立即执行)
